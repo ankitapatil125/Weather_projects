@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Weather Records</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f4f9;
+    }
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin: 2em 0;
+      overflow-x: auto;
+      background-color: #fff;
+    }
+
+    th, td {
+      border: 1px solid #ddd;
+      padding: 0.8em;
+      text-align: center;
+    }
+
+    th {
+      background-color: #f2f2f2;
+      cursor: pointer;
+    }
+
+    th:hover {
+      background-color: #e0e0e0;
+    }
+
+    td {
+      background-color: #f9f9f9;
+    }
+
+    .record {
+      margin-bottom: 2em;
+    }
+
+    @media (max-width: 768px) {
+      table {
+        font-size: 14px;
+      }
+
+      th, td {
+        padding: 0.5em;
+      }
+    }
+
+    .form-container {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 1em;
+    }
+
+    select {
+      padding: 0.5em;
+      font-size: 1em;
+      margin: 0 1em;
+    }
+
+    .no-data {
+      font-size: 1.2em;
+      color: #777;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+  <h1 style="text-align:center; color: #333; padding-top: 20px;">Weather Records</h1>
+
+  <!-- Dropdown Filters -->
+  <div class="form-container">
+    <form method="GET" action="{% url 'weather:weather_records' %}">
+      <select name="region" id="region">
+        <option value="">Select Region</option>
+        {% for region in regions %}
+          <option value="{{ region.id }}" {% if request.GET.region == region.id|stringformat:"s" %}selected{% endif %}>{{ region.name }} ({{ region.code }})</option>
+        {% endfor %}
+      </select>
+
+      <select name="parameter" id="parameter">
+        <option value="">Select Parameter</option>
+        {% for param in parameters %}
+          <option value="{{ param.id }}" {% if request.GET.parameter == param.id|stringformat:"s" %}selected{% endif %}>{{ param.name }} ({{ param.unit }})</option>
+        {% endfor %}
+      </select>
+
+      <button type="submit">Filter</button>
+    </form>
+  </div>
+
+  {% if weather_records %}
+    <table id="weather-table">
+      <thead>
+        <tr>
+          <th>Year</th>
+          <th>Region</th>
+          <th>Parameter</th>
+          <th>Jan</th>
+          <th>Feb</th>
+          <th>Mar</th>
+          <th>Apr</th>
+          <th>May</th>
+          <th>Jun</th>
+          <th>Jul</th>
+          <th>Aug</th>
+          <th>Sep</th>
+          <th>Oct</th>
+          <th>Nov</th>
+          <th>Dec</th>
+          <th>Annual</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for record in weather_records %}
+          <tr>
+            <td>{{ record.year }}</td>
+            <td>{{ record.region.name }} ({{ record.region.code }})</td>
+            <td>{{ record.parameter.name }} ({{ record.parameter.unit }})</td>
+            <td>{{ record.jan|default:"N/A" }}</td>
+            <td>{{ record.feb|default:"N/A" }}</td>
+            <td>{{ record.mar|default:"N/A" }}</td>
+            <td>{{ record.apr|default:"N/A" }}</td>
+            <td>{{ record.may|default:"N/A" }}</td>
+            <td>{{ record.jun|default:"N/A" }}</td>
+            <td>{{ record.jul|default:"N/A" }}</td>
+            <td>{{ record.aug|default:"N/A" }}</td>
+            <td>{{ record.sep|default:"N/A" }}</td>
+            <td>{{ record.oct|default:"N/A" }}</td>
+            <td>{{ record.nov|default:"N/A" }}</td>
+            <td>{{ record.dec|default:"N/A" }}</td>
+            <td>{{ record.annual|default:"N/A" }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p class="no-data">No weather records found.</p>
+  {% endif %}
+
+</body>
+</html>

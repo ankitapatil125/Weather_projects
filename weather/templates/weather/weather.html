@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Weather Records</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f5f5f5;
+    }
+
+    /* Sidebar Navigation */
+    .sidebar {
+      height: 100%;
+      width: 250px;
+      position: fixed;
+      top: 0;
+      left: 0;
+      background-color: #2c3e50;
+      color: white;
+      padding-top: 20px;
+      box-shadow: 2px 0 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .sidebar a {
+      display: block;
+      padding: 14px 16px;
+      text-decoration: none;
+      color: white;
+      font-size: 1.1em;
+      margin: 10px 0;
+    }
+
+    .sidebar a:hover {
+      background-color: #34495e;
+    }
+
+    .sidebar a.active {
+      background-color: #1abc9c;
+    }
+
+    /* Main Content */
+    .main-content {
+      margin-left: 250px;
+      padding: 20px;
+    }
+
+    /* Header Section */
+    header {
+      background-color: #1abc9c;
+      color: white;
+      padding: 40px;
+      text-align: center;
+      font-size: 2.5em;
+      font-weight: bold;
+      margin-bottom: 20px;
+    }
+
+    header p {
+      font-size: 1.2em;
+    }
+
+    /* Form Styling */
+    .form-container {
+      background-color: white;
+      padding: 20px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      border-radius: 8px;
+      margin-bottom: 30px;
+    }
+
+    .form-container label {
+      font-size: 1.1em;
+      margin-right: 10px;
+      width: 120px;
+      display: inline-block;
+    }
+
+    .form-container select,
+    .form-container button,
+    .form-container input {
+      padding: 10px;
+      font-size: 1.1em;
+      margin-bottom: 15px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      width: 200px;
+    }
+
+    .form-container button {
+      background-color: #28a745;
+      color: white;
+      cursor: pointer;
+    }
+
+    .form-container button:hover {
+      background-color: #218838;
+    }
+
+    /* Table Styling */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 30px;
+    }
+
+    table th, table td {
+      padding: 12px;
+      text-align: center;
+      border: 1px solid #ddd;
+    }
+
+    table th {
+      background-color: #1abc9c;
+      color: white;
+    }
+
+    table tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+
+    table tr:hover {
+      background-color: #f1f1f1;
+    }
+
+    .no-records {
+      text-align: center;
+      font-size: 1.2em;
+      color: #888;
+      padding: 20px 0;
+    }
+
+    .pagination {
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    .pagination a {
+      padding: 10px;
+      margin: 5px;
+      background-color: #28a745;
+      color: white;
+      text-decoration: none;
+      border-radius: 5px;
+    }
+
+    .pagination a:hover {
+      background-color: #218838;
+    }
+
+    /* Footer Section */
+    footer {
+      background-color: #2c3e50;
+      color: white;
+      text-align: center;
+      padding: 1em;
+      margin-top: 40px;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .sidebar {
+        width: 200px;
+      }
+
+      .main-content {
+        margin-left: 200px;
+      }
+
+      .form-container select,
+      .form-container button {
+        width: 100%;
+      }
+
+      table th, table td {
+        padding: 8px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Sidebar Section -->
+  <div class="sidebar">
+    <a href="#" class="active">Home</a>
+    <a href="#weather">Weather Records</a>
+    <a href="#about">About</a>
+  </div>
+
+  <!-- Main Content Section -->
+  <div class="main-content">
+    <!-- Header Section -->
+    <header>
+      <h1>Weather Records</h1>
+      <p>Explore Weather Data</p>
+    </header>
+
+    <!-- Filter Form -->
+    <div class="form-container">
+      <form method="get">
+        <div>
+          <label for="region">Choose Region:</label>
+          <select name="region_name" id="region">
+            <option value="">--Select Region--</option>
+            {% for region in regions %}
+              <option value="{{ region }}" {% if region == selected_region %}selected{% endif %}>{{ region }}</option>
+            {% endfor %}
+          </select>
+
+          <label for="parameter">Choose Parameter:</label>
+          <select name="parameter_name" id="parameter">
+            <option value="">---Select Parameter---</option>
+            {% for parameter in parameters %}
+              <option value="{{ parameter }}" {% if parameter == selected_parameter %}selected{% endif %}>{{ parameter }}</option>
+            {% endfor %}
+          </select>
+
+          <button type="submit">check it</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Search Functionality
+    <div class="form-container">
+      <form method="get">
+        <input type="text" name="search_query" placeholder="Search by region or parameter..." value="{{ search_query }}">
+        <button type="submit">Search</button>
+      </form>
+    </div> -->
+
+    <!-- Weather Records Table -->
+    {% if records %}
+      <table>
+        <thead>
+          <tr>
+            <th>Year</th>
+            <th>Region</th>
+            <th>Parameter</th>
+            <th>Jan</th>
+            <th>Feb</th>
+            <th>Mar</th>
+            <th>Apr</th>
+            <th>May</th>
+            <th>Jun</th>
+            <th>Jul</th>
+            <th>Aug</th>
+            <th>Sep</th>
+            <th>Oct</th>
+            <th>Nov</th>
+            <th>Dec</th>
+            <th>Annual</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for record in records %}
+            <tr>
+              <td>{{ record.year }}</td>
+              <td>{{ record.region_name }}</td>
+              <td>{{ record.parameter_name }}</td>
+              <td>{{ record.jan }}</td>
+              <td>{{ record.feb }}</td>
+              <td>{{ record.mar }}</td>
+              <td>{{ record.apr }}</td>
+              <td>{{ record.may }}</td>
+              <td>{{ record.jun }}</td>
+              <td>{{ record.jul }}</td>
+              <td>{{ record.aug }}</td>
+              <td>{{ record.sep }}</td>
+              <td>{{ record.oct }}</td>
+              <td>{{ record.nov }}</td>
+              <td>{{ record.dec }}</td>
+              <td>{{ record.annual }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+
+      <!-- Pagination -->
+      <div class="pagination">
+        {% for page_num in pagination %}
+          <a href="?page={{ page_num }}" {% if page_num == current_page %}class="active"{% endif %}>{{ page_num }}</a>
+        {% endfor %}
+      </div>
+
+      <!-- Export to CSV -->
+      <div class="form-container">
+        <a href="/export_csv" class="button">Export to CSV</a>
+      </div>
+    {% else %}
+      <p class="no-records">No weather records found for the selected criteria.</p>
+    {% endif %}
+  </div>
+
+  <!-- Footer Section -->
+  <footer>
+    <p>&copy; 2025 Weather Records | Powered by Django</p>
+  </footer>
+
+</body>
+</html>
